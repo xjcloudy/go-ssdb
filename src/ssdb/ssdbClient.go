@@ -20,7 +20,12 @@ type SSDBClient struct {
 }
 
 func NewSSDBClient(host, port string) SSDBClient {
-	return SSDBClient{host, port, nil, nil}
+	return SSDBClient{
+		Host:host,
+		Port:port,
+		conn:nil,
+		reader:nil,
+	}
 }
 func (c *SSDBClient)Connect() (error) {
 	if c.conn != nil {

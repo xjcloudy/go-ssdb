@@ -24,5 +24,9 @@ func (r *SSDBResponse) Map() (map[string]string) {
 	return mapData
 }
 func NewSSDBResponse() (SSDBResponse) {
-	return SSDBResponse{true, "ok", nil}
+	return SSDBResponse{
+		responseStatus:true,
+		responseText:"ok",
+		packages:nil,
+	}
 }
