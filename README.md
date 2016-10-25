@@ -9,3 +9,6 @@
    resp,err := client.Set("hello","world")
    
 ```
+## todo
+
+ - 实现更多的api
