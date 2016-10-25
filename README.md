@@ -4,6 +4,8 @@
 ## usage
 
 ```
-   client:=ssdb.NewSSDBClient("localhost","8888")
+   client := ssdb.NewSSDBClient("localhost", "8888")
+   err:=client.Connect()
    resp,err := client.Set("hello","world")
+   
 ```
