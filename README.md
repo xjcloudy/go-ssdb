@@ -16,6 +16,7 @@
  - hget
  - hscan
  - hset
+ 
 ## todo
 
  - 实现更多的api
