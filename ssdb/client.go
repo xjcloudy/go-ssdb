@@ -1,3 +1,4 @@
+//实现与ssdb通信。
 package ssdb
 
 import (
@@ -12,22 +13,22 @@ import (
 //锁。保证命令已串行的方式执行。确保多线程情况下，运行正常
 var lock sync.Mutex
 
-type SSDBClient struct {
+type Client struct {
 	Host   string
 	Port   string
 	conn   net.Conn
 	reader *bufio.Reader
 }
 
-func NewSSDBClient(host, port string) SSDBClient {
-	return SSDBClient{
+func NewSSDBClient(host, port string) Client {
+	return Client{
 		Host:host,
 		Port:port,
 		conn:nil,
 		reader:nil,
 	}
 }
-func (c *SSDBClient)Connect() (error) {
+func (c *Client)Connect() (error) {
 	if c.conn != nil {
 		return errors.New("aready connected")
 	}
@@ -45,40 +46,16 @@ func (c *SSDBClient)Connect() (error) {
 	return nil
 
 }
-func (c *SSDBClient)Get(key string) (string, error) {
-	c.send([]string{"get", key})
-	response := c.read()
-	return response.String(), handleResponse(response)
-}
-func (c *SSDBClient)Set(key, value string) (string, error) {
-	c.send([]string{"set", key, value})
-	response := c.read()
-	return response.String(), handleResponse(response)
-}
 
-func (c *SSDBClient)Hscan(mapName, startKey, endKey string, limit int64) (map[string]string, error) {
-	c.send([]string{"hscan", mapName, startKey, endKey, strconv.FormatInt(limit, 10)})
-	response := c.read()
-	return response.Map(), handleResponse(response)
-}
-func (c *SSDBClient)Hget(mapName, key string) (string, error) {
-	c.send([]string{"hget", mapName, key})
-	response := c.read()
-	return response.String(), handleResponse(response)
-}
-func (c *SSDBClient)Hset(mapName, key, value string) (string, error) {
-	c.send([]string{"hset", mapName, key, value})
-	response := c.read()
-	return response.String(), handleResponse(response)
-}
-func handleResponse(response SSDBResponse) error {
+
+func handleResponse(response Response) error {
 	var err error
 	if (!response.responseStatus) {
 		err = errors.New(response.responseText)
 	}
 	return err
 }
-func (c *SSDBClient)send(cmd []string) {
+func (c *Client)send(cmd...interface{}) {
 	lock.Lock()
 	str := make([]string, 0)
 	for _, commond := range cmd {
@@ -91,7 +68,7 @@ func (c *SSDBClient)send(cmd []string) {
 		fmt.Println(err)
 	}
 }
-func (c *SSDBClient)read() (SSDBResponse) {
+func (c *Client)read() (Response) {
 	defer lock.Unlock()
 	//使用buff reader。因为ssdb的server 不会发送EOF.作为结束。所以不能用ReadAll之类的。已EOF或exception为返回条件的函数
 	//边界判断 ssdb的协议为连续两个换行"\n" 为结束

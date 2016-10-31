@@ -2,16 +2,16 @@ package ssdb
 
 import "strings"
 
-type SSDBResponse struct {
+type Response struct {
 	responseStatus bool
 	responseText   string
 	packages       []string
 }
 
-func (r *SSDBResponse) String() (string) {
+func (r *Response) String() (string) {
 	return strings.Join(r.packages, "")
 }
-func (r *SSDBResponse) Map() (map[string]string) {
+func (r *Response) Map() (map[string]string) {
 	mapData := make(map[string]string)
 	size := len(r.packages)
 	i := 0
@@ -23,8 +23,8 @@ func (r *SSDBResponse) Map() (map[string]string) {
 	}
 	return mapData
 }
-func NewSSDBResponse() (SSDBResponse) {
-	return SSDBResponse{
+func NewSSDBResponse() (Response) {
+	return Response{
 		responseStatus:true,
 		responseText:"ok",
 		packages:nil,
