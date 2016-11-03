@@ -1,6 +1,9 @@
 package ssdb
 
-import "strings"
+import (
+	"strings"
+	"strconv"
+)
 
 type Response struct {
 	responseStatus bool
@@ -8,10 +11,28 @@ type Response struct {
 	packages       []string
 }
 
-func (r *Response) String() (string) {
+func (r *Response) toString() (string) {
 	return strings.Join(r.packages, "")
 }
-func (r *Response) Map() (map[string]string) {
+func (r *Response) toBool()(bool){
+	b,err:=strconv.ParseBool(r.packages[0])
+	if err!=nil{
+		b=true
+	}
+	return  b
+}
+func (r *Response) toInt()(int64){
+	if i,err:=strconv.ParseInt(r.packages[0],10, 64);err == nil{
+		return i
+	}else{
+		return 0
+	}
+}
+func (r *Response) toArray()([]string){
+	//todo should return new array fill with r.packages
+	return r.packages
+}
+func (r *Response) toMap() (map[string]string) {
 	mapData := make(map[string]string)
 	size := len(r.packages)
 	i := 0

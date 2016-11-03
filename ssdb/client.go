@@ -47,7 +47,6 @@ func (c *Client)Connect() (error) {
 
 }
 
-
 func handleResponse(response Response) error {
 	var err error
 	if (!response.responseStatus) {
@@ -55,10 +54,11 @@ func handleResponse(response Response) error {
 	}
 	return err
 }
-func (c *Client)send(cmd...interface{}) {
+func (c *Client)do(cmd string,params...string) (Response) {
 	lock.Lock()
-	str := make([]string, 0)
-	for _, commond := range cmd {
+	str := []string{}
+	params=append([]string{cmd},params...)
+	for _, commond := range params {
 		str = append(str, strconv.Itoa(len(commond)))
 		str = append(str, commond)
 	}
@@ -67,6 +67,8 @@ func (c *Client)send(cmd...interface{}) {
 	if err != nil {
 		fmt.Println(err)
 	}
+	response := c.read()
+	return response
 }
 func (c *Client)read() (Response) {
 	defer lock.Unlock()
