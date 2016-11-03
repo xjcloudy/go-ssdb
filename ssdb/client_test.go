@@ -90,6 +90,17 @@ func hsetApi(client Client) {
 	fmt.Println("multihget ", mkvs)
 	client.MultiHdel("map1", []string{"b1", "a1"})
 }
+func zsetApi(client Client){
+	client.Zset("z1","k1",100)
+	k1val,_:=client.Zget("z1","k1")
+	fmt.Println("k1 =",k1val)
+	client.Zdel("z1","k1")
+	nval,_:=client.Zincr("z1","k1",1000)
+	fmt.Println("new score=",nval)
+	size,_:=client.Zsize("z1")
+	fmt.Println("size =",size)
+
+}
 func TestSSDBClient_Hscan(t *testing.T) {
 	ssdb := NewSSDBClient("localhost", "8888")
 	err := ssdb.Connect()
@@ -98,6 +109,7 @@ func TestSSDBClient_Hscan(t *testing.T) {
 	} else {
 		setApi(ssdb)
 		hsetApi(ssdb)
+		zsetApi(ssdb)
 		//var wait sync.WaitGroup
 		//for i := 0; i < 100; i++ {
 		//	wait.Add(1)
