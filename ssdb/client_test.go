@@ -1,7 +1,6 @@
 package ssdb
 
 import (
-	//"fmt"
 	"testing"
 	//"sync"
 	"fmt"
@@ -90,15 +89,45 @@ func hsetApi(client Client) {
 	fmt.Println("multihget ", mkvs)
 	client.MultiHdel("map1", []string{"b1", "a1"})
 }
-func zsetApi(client Client){
-	client.Zset("z1","k1",100)
-	k1val,_:=client.Zget("z1","k1")
-	fmt.Println("k1 =",k1val)
-	client.Zdel("z1","k1")
-	nval,_:=client.Zincr("z1","k1",1000)
-	fmt.Println("new score=",nval)
-	size,_:=client.Zsize("z1")
-	fmt.Println("size =",size)
+func zsetApi(client Client) {
+	client.Zset("z1", "k1", 100)
+	k1val, _ := client.Zget("z1", "k1")
+	fmt.Println("k1 =", k1val)
+	client.Zdel("z1", "k1")
+	nval, _ := client.Zincr("z1", "k1", 1000)
+	fmt.Println("new score=", nval)
+	zkeys, _ := client.Zlist("", "", 1)
+	fmt.Println("get key list", zkeys)
+	zrkeys, _ := client.Zrlist("", "", 1)
+	fmt.Println("get r key list", zrkeys)
+	size, _ := client.Zsize("z1")
+	fmt.Println("size =", size)
+
+	ks, _ := client.Zkeys("z1", "", "", "", 10)
+	fmt.Println("kyes", ks)
+
+	count, _ := client.Zcount("z1", "", "")
+	fmt.Println("count =", count)
+
+	sum, _ := client.Zsum("z1", "", "")
+	fmt.Println("sum=", sum)
+
+	avg, _ := client.Zavg("z1", "", "")
+	fmt.Println("avg=", avg)
+
+	rm1, _ := client.Zremrangebyrank("z1", "k1", "k1")
+	fmt.Println("rm key ", rm1)
+
+	top, _ := client.ZpopFront("z1", 1)
+	fmt.Println("pop from zset", top)
+
+	end, _ := client.ZpopBack("z1", 1)
+	fmt.Println("pop from zset", end)
+	client.MultiZset("z2", map[string]string{"k1":"1", "k2":"2", "k3":"3"})
+	kvs, _ := client.MultiZget("z2", []string{"k1", "k2"})
+	fmt.Println("multi get ", kvs)
+	client.MultiZdel("z2", []string{"k1", "k2"})
+	client.Zclear("z1")
 
 }
 func TestSSDBClient_Hscan(t *testing.T) {

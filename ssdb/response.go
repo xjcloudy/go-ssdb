@@ -14,21 +14,28 @@ type Response struct {
 func (r *Response) toString() (string) {
 	return strings.Join(r.packages, "")
 }
-func (r *Response) toBool()(bool){
-	b,err:=strconv.ParseBool(r.packages[0])
-	if err!=nil{
-		b=true
+func (r *Response) toBool() (bool) {
+	b, err := strconv.ParseBool(r.packages[0])
+	if err != nil {
+		b = true
 	}
-	return  b
+	return b
 }
-func (r *Response) toInt()(int64){
-	if i,err:=strconv.ParseInt(r.packages[0],10, 64);err == nil{
+func (r *Response) toInt() (int64) {
+	if i, err := strconv.ParseInt(r.packages[0], 10, 64); err == nil {
 		return i
-	}else{
+	} else {
 		return 0
 	}
 }
-func (r *Response) toArray()([]string){
+func (r *Response)toFloat() (float64) {
+	if i, err := strconv.ParseFloat(r.packages[0], 64); err == nil {
+		return i
+	} else {
+		return 0
+	}
+}
+func (r *Response) toArray() ([]string) {
 	//todo should return new array fill with r.packages
 	return r.packages
 }
