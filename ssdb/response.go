@@ -15,11 +15,17 @@ func (r *Response) toString() (string) {
 	return strings.Join(r.packages, "")
 }
 func (r *Response) toBool() (bool) {
-	b, err := strconv.ParseBool(r.packages[0])
-	if err != nil {
-		b = true
+	if r.responseStatus {
+		b := true
+		rsize := len(r.packages)
+		if rsize > 0&&r.packages[0] == "false" {
+			b = false
+		}
+		return b
+	} else {
+		return false
 	}
-	return b
+
 }
 func (r *Response) toInt() (int64) {
 	if i, err := strconv.ParseInt(r.packages[0], 10, 64); err == nil {
@@ -40,15 +46,19 @@ func (r *Response) toArray() ([]string) {
 	return r.packages
 }
 func (r *Response) toMap() (map[string]string) {
+
 	mapData := make(map[string]string)
 	size := len(r.packages)
 	i := 0
-	for i < size {
-		key := r.packages[i]
-		value := r.packages[i + 1]
-		mapData[key] = value
-		i += 2
+	if r.responseStatus&&size % 2 == 0 {
+		for i < size {
+			key := r.packages[i]
+			value := r.packages[i + 1]
+			mapData[key] = value
+			i += 2
+		}
 	}
+
 	return mapData
 }
 func NewSSDBResponse() (Response) {

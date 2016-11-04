@@ -130,15 +130,57 @@ func zsetApi(client Client) {
 	client.Zclear("z1")
 
 }
+func qsetApi(client Client){
+
+        qsize,_:=client.QpushFront("q1","a","b","c","d")
+	fmt.Println("qsize ",qsize)
+	setr,_:=client.Qset("q1",1,"v2")
+	fmt.Println("qset ",setr)
+	getr,_:=client.Qget("q1",100)
+	fmt.Println("qget ",getr)
+	list,_:=client.Qlist("","",100)
+	fmt.Println("queue values ",list)
+
+	q1size,_:=client.Qsize("q1")
+	fmt.Println("q1 size ",q1size)
+
+	fr,_:=client.Qfront("q1")
+	fmt.Println("front of q1 ",fr)
+
+	bc,_:=client.Qback("q1")
+	fmt.Println("back of q1 ",bc)
+
+
+	rlist,_:=client.Qrange("q1",0,10)
+	fmt.Println("range of q1 ",rlist)
+
+	slice,_:=client.Qslice("q1",1,12)
+	fmt.Println("slice of q1 ",slice)
+
+	client.QpushBack("q1",[]string{"b1","b2"}...)
+
+	popitem,_:=client.QpopFront("q1",10)
+	fmt.Println("item pop from q1 is ",popitem)
+	backitem,_:=client.QpopBack("q1",2)
+	fmt.Println("items back from q1 is ",backitem)
+
+	psize,_:=client.QtrimFront("q1",2)
+	fmt.Printf("delete %d items from q1 at top \n",psize)
+
+	bsize,_:=client.QtrimBack("q1",12)
+	fmt.Printf("delete %d items from q1 at bottom",bsize)
+
+}
 func TestSSDBClient_Hscan(t *testing.T) {
 	ssdb := NewSSDBClient("localhost", "8888")
 	err := ssdb.Connect()
 	if err != nil {
 		t.Error(err)
 	} else {
-		setApi(ssdb)
-		hsetApi(ssdb)
-		zsetApi(ssdb)
+		//setApi(ssdb)
+		//hsetApi(ssdb)
+		//zsetApi(ssdb)
+		qsetApi(ssdb)
 		//var wait sync.WaitGroup
 		//for i := 0; i < 100; i++ {
 		//	wait.Add(1)
