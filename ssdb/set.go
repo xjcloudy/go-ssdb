@@ -53,12 +53,11 @@ func (c *Client)Bitcount(key string, between ...int) (int64, error) {
 	return response.toInt(), handleResponse(response)
 }
 func (c *Client)Substr(key string, between ...int64) (string, error) {
-	var response Response
 	var pos []string
 	for _, i := range (between) {
 		pos = append(pos, sInt(i))
 	}
-	response = c.do("substr", pos...)
+	response := c.do("substr", pos...)
 	return response.toString(), handleResponse(response)
 }
 func (c *Client)Strlen(key string) (int64, error) {

@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-func setApi(client Client) {
+func setApi(client *Client) {
 	client.Set("t1", "nil")
 	client.Get("t1")
 	client.Setx("sx", "5秒后消失", 5)
@@ -53,7 +53,7 @@ func setApi(client Client) {
 
 	client.MultiDel([]string{"t1", "red"})
 }
-func hsetApi(client Client) {
+func hsetApi(client *Client) {
 	client.Hset("map1", "m1", "v1");
 	mval, _ := client.Hget("map1", "m1")
 	fmt.Println("value of m1 from map1 is", mval)
@@ -89,7 +89,7 @@ func hsetApi(client Client) {
 	fmt.Println("multihget ", mkvs)
 	client.MultiHdel("map1", []string{"b1", "a1"})
 }
-func zsetApi(client Client) {
+func zsetApi(client *Client) {
 	client.Zset("z1", "k1", 100)
 	k1val, _ := client.Zget("z1", "k1")
 	fmt.Println("k1 =", k1val)
@@ -130,7 +130,7 @@ func zsetApi(client Client) {
 	client.Zclear("z1")
 
 }
-func qsetApi(client Client){
+func qsetApi(client *Client){
 
         qsize,_:=client.QpushFront("q1","a","b","c","d")
 	fmt.Println("qsize ",qsize)
@@ -177,9 +177,9 @@ func TestSSDBClient_Hscan(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	} else {
-		//setApi(ssdb)
-		//hsetApi(ssdb)
-		//zsetApi(ssdb)
+		setApi(ssdb)
+		hsetApi(ssdb)
+		zsetApi(ssdb)
 		qsetApi(ssdb)
 		//var wait sync.WaitGroup
 		//for i := 0; i < 100; i++ {
@@ -205,3 +205,5 @@ func TestSSDBClient_Hscan(t *testing.T) {
 		//wait.Wait()
 	}
 }
+
+

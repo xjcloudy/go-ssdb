@@ -5,16 +5,16 @@ import (
 	"strconv"
 )
 
-type Response struct {
+type response struct {
 	responseStatus bool
 	responseText   string
 	packages       []string
 }
 
-func (r *Response) toString() (string) {
+func (r *response) toString() (string) {
 	return strings.Join(r.packages, "")
 }
-func (r *Response) toBool() (bool) {
+func (r *response) toBool() (bool) {
 	if r.responseStatus {
 		b := true
 		rsize := len(r.packages)
@@ -27,25 +27,25 @@ func (r *Response) toBool() (bool) {
 	}
 
 }
-func (r *Response) toInt() (int64) {
+func (r *response) toInt() (int64) {
 	if i, err := strconv.ParseInt(r.packages[0], 10, 64); err == nil {
 		return i
 	} else {
 		return 0
 	}
 }
-func (r *Response)toFloat() (float64) {
+func (r *response)toFloat() (float64) {
 	if i, err := strconv.ParseFloat(r.packages[0], 64); err == nil {
 		return i
 	} else {
 		return 0
 	}
 }
-func (r *Response) toArray() ([]string) {
+func (r *response) toArray() ([]string) {
 	//todo should return new array fill with r.packages
 	return r.packages
 }
-func (r *Response) toMap() (map[string]string) {
+func (r *response) toMap() (map[string]string) {
 
 	mapData := make(map[string]string)
 	size := len(r.packages)
@@ -61,8 +61,8 @@ func (r *Response) toMap() (map[string]string) {
 
 	return mapData
 }
-func NewSSDBResponse() (Response) {
-	return Response{
+func newSSDBResponse() (*response) {
+	return &response{
 		responseStatus:true,
 		responseText:"ok",
 		packages:nil,

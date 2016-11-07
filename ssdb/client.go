@@ -13,15 +13,16 @@ import (
 //锁。保证命令已串行的方式执行。确保多线程情况下，运行正常
 var lock sync.Mutex
 
+//代表一个到ssdb服务端的链接。
 type Client struct {
-	Host   string
-	Port   string
+	Host   string        	//ssdb服务地址
+	Port   string		//访问端口
 	conn   net.Conn
 	reader *bufio.Reader
 }
-
-func NewSSDBClient(host, port string) Client {
-	return Client{
+//构造函数
+func NewSSDBClient(host, port string) *Client {
+	return &Client{
 		Host:host,
 		Port:port,
 		conn:nil,
@@ -47,14 +48,14 @@ func (c *Client)Connect() (error) {
 
 }
 
-func handleResponse(response Response) error {
+func handleResponse(response *response) error {
 	var err error
 	if (!response.responseStatus) {
 		err = errors.New(response.responseText)
 	}
 	return err
 }
-func (c *Client)do(cmd string,params...string) (Response) {
+func (c *Client)do(cmd string,params...string) (*response) {
 	lock.Lock()
 	str := []string{}
 	params=append([]string{cmd},params...)
@@ -70,12 +71,12 @@ func (c *Client)do(cmd string,params...string) (Response) {
 	response := c.read()
 	return response
 }
-func (c *Client)read() (Response) {
+func (c *Client)read() (*response) {
 	defer lock.Unlock()
 	//使用buff reader。因为ssdb的server 不会发送EOF.作为结束。所以不能用ReadAll之类的。已EOF或exception为返回条件的函数
 	//边界判断 ssdb的协议为连续两个换行"\n" 为结束
 	endCount := 0
-	response := NewSSDBResponse()
+	response := newSSDBResponse()
 
 	for {
 		//开始一行行读取

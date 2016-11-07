@@ -24,5 +24,9 @@ api的参数和返回类型限定于以下几种。
   ssdb的api用false表示操作失败，其他值表示成功。golang里面统一处理成true和false.
 - `[]string`
 - `map[string]string`
+
+## api
+
+请使用godoc 查看
  
  
