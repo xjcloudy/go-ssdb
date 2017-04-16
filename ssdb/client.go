@@ -31,7 +31,7 @@ func NewSSDBClient(host, port string) *Client {
 }
 func (c *Client)Connect() (error) {
 	if c.conn != nil {
-		return errors.New("aready connected")
+		return errors.New("already connected")
 	}
 	address := fmt.Sprintf("%s:%s", c.Host, c.Port)
 	addr, err := net.ResolveTCPAddr("tcp", address)
@@ -115,4 +115,3 @@ func (c *Client)read() (*response) {
 	}
 
 }
-
