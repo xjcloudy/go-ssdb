@@ -2,7 +2,6 @@ package ssdb
 
 import (
 	"testing"
-	//"sync"
 	"fmt"
 )
 
