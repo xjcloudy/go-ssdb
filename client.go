@@ -2,34 +2,36 @@
 package ssdb
 
 import (
-	"net"
-	"fmt"
 	"bufio"
-	"strings"
-	"strconv"
 	"errors"
+	"fmt"
+	"net"
+	"strconv"
+	"strings"
 	"sync"
 )
+
 //锁。保证命令已串行的方式执行。确保多线程情况下，运行正常
 var lock sync.Mutex
 
 //代表一个到ssdb服务端的链接。
 type Client struct {
-	Host   string        	//ssdb服务地址
-	Port   string		//访问端口
+	Host   string //ssdb服务地址
+	Port   string //访问端口
 	conn   net.Conn
 	reader *bufio.Reader
 }
+
 //构造函数
 func NewSSDBClient(host, port string) *Client {
 	return &Client{
-		Host:host,
-		Port:port,
-		conn:nil,
-		reader:nil,
+		Host:   host,
+		Port:   port,
+		conn:   nil,
+		reader: nil,
 	}
 }
-func (c *Client)Connect() (error) {
+func (c *Client) Connect() error {
 	if c.conn != nil {
 		return errors.New("already connected")
 	}
@@ -50,15 +52,15 @@ func (c *Client)Connect() (error) {
 
 func handleResponse(response *response) error {
 	var err error
-	if (!response.responseStatus) {
+	if !response.responseStatus {
 		err = errors.New(response.responseText)
 	}
 	return err
 }
-func (c *Client)do(cmd string,params...string) (*response) {
+func (c *Client) do(cmd string, params ...string) *response {
 	lock.Lock()
 	str := []string{}
-	params=append([]string{cmd},params...)
+	params = append([]string{cmd}, params...)
 	for _, commond := range params {
 		str = append(str, strconv.Itoa(len(commond)))
 		str = append(str, commond)
@@ -71,7 +73,7 @@ func (c *Client)do(cmd string,params...string) (*response) {
 	response := c.read()
 	return response
 }
-func (c *Client)read() (*response) {
+func (c *Client) read() *response {
 	defer lock.Unlock()
 	//使用buff reader。因为ssdb的server 不会发送EOF.作为结束。所以不能用ReadAll之类的。已EOF或exception为返回条件的函数
 	//边界判断 ssdb的协议为连续两个换行"\n" 为结束
@@ -82,7 +84,7 @@ func (c *Client)read() (*response) {
 		//开始一行行读取
 		line, _ := c.reader.ReadBytes('\n')
 		//判断是否读到了一个空行
-		if (len(line) == 1&&string(line) == "\n") {
+		if len(line) == 1 && string(line) == "\n" {
 			endCount++
 			//如果是连续2个则说明读完了。可以结束并返回结果了
 			if endCount >= 2 {
@@ -92,7 +94,7 @@ func (c *Client)read() (*response) {
 			//如果不是单独空行则重置边界值
 			endCount = 0
 			//去掉每行最后面的一个换行符
-			line = line[:len(line) - 1]
+			line = line[:len(line)-1]
 
 			//先取长度值
 			payloadSize, _ := strconv.ParseInt(string(line), 10, 64)
